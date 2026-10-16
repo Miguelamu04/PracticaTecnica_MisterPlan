@@ -1,11 +1,11 @@
-
 {
     "name": "miguel/misterplan-reservas",
     "description": "Aplicación de gestión de reservas de alojamiento para la prueba técnica de MisterPlan",
     "type": "project",
     "license": "proprietary",
     "require": {
-        "php": "^8.3"
+        "php": "^8.3",
+        "vlucas/phpdotenv": "^5.7"
     },
     "autoload": {
         "psr-4": {
