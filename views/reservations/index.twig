@@ -53,6 +53,7 @@
                 <th scope="col">Estado</th>
                 <th scope="col">Importe</th>
                 <th scope="col">Detalles</th>
+                <th scope="col">Acciones</th>
             </tr>
         </thead>
 
@@ -69,11 +70,24 @@
                         <a href="/reservations/{{ reservation.id }}">
                             Ver detalles
                         </a>
+                    </td>
+                    <td>
+                        {% if reservation.estado != 'cancelada' %}
+                            <button
+                                type="button"
+                                class="cancel-reservation"
+                                data-id="{{ reservation.id }}"
+                            >
+                                Cancelar reserva
+                            </button>
+                        {% else %}
+                            <span>Cancelada</span>
+                        {% endif %}
                     </td>                   
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="7">No se han encontrado reservas.</td>
+                    <td colspan="8">No se han encontrado reservas.</td>
                 </tr>
             {% endfor %}
         </tbody>

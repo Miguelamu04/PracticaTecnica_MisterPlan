@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    const pendingCancellations = new Set();
+
     let currentController = null;
 
     function formatDate(value) {
@@ -35,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reservations.length === 0) {
             const row = document.createElement('tr');
             const cell = addCell(row, 'No se han encontrado reservas.');
-            cell.colSpan = 7;
+            cell.colSpan = 8;
             tableBody.appendChild(row);
             return;
         }
@@ -58,6 +60,23 @@ document.addEventListener('DOMContentLoaded', () => {
             
             detailCell.appendChild(link);
             row.appendChild(detailCell);
+
+            const actionCell = document.createElement('td');
+
+            if (reservation.estado !== 'cancelada') {
+                const cancelButton = document.createElement('button');
+
+                cancelButton.type = 'button';
+                cancelButton.className = 'cancel-reservation';
+                cancelButton.dataset.id = reservation.id;
+                cancelButton.textContent = 'Cancelar reserva';
+
+                actionCell.appendChild(cancelButton);
+            } else {
+                actionCell.textContent = 'Cancelada';
+            }
+
+            row.appendChild(actionCell);
             tableBody.appendChild(row);
 
         });
@@ -129,5 +148,73 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('reset', () => {
         setTimeout(loadReservations, 0);
     });
+
+    tableBody.addEventListener('click', async (event) => {
+    const button = event.target.closest('.cancel-reservation');
+
+    if (!button || !tableBody.contains(button)) {
+        return;
+    }
+
+    const reservationId = button.dataset.id;
+
+    if (pendingCancellations.has(reservationId)) {
+        return;
+    }
+
+    if (!window.confirm('¿Seguro que quieres cancelar esta reserva?')) {
+        return;
+    }
+
+    pendingCancellations.add(reservationId);
+    button.disabled = true;
+    message.textContent = 'Cancelando reserva...';
+
+    try {
+        const response = await fetch(
+            `/api/reservations/${reservationId}/status`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ status: 'cancelada' })
+            }
+        );
+
+        if (!response.ok) {
+            let errorMessage = 'No se ha podido cancelar la reserva.';
+
+            if (response.status === 404) {
+                errorMessage = 'La reserva ya no existe.';
+            } else if (response.status === 400) {
+                errorMessage = 'La solicitud de cancelación no es válida.';
+            } else if (response.status >= 500) {
+                errorMessage = 'Error del servidor. Inténtalo de nuevo más tarde.';
+            }
+
+            throw new Error(errorMessage);
+        }
+
+        const row = button.closest('tr');
+
+        if (row) {
+            row.cells[4].textContent = 'Cancelada';
+        }
+
+        button.replaceWith(document.createTextNode('Cancelada'));
+        message.textContent = 'Reserva cancelada correctamente.';
+
+    } catch (error) {
+        message.textContent = error.message;
+    } finally {
+        pendingCancellations.delete(reservationId);
+
+        if (button.isConnected) {
+            button.disabled = false;
+        }
+    }
+});
 
 });

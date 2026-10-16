@@ -34,7 +34,6 @@ try {
 
     $router->add('GET', '/reservations', [$pageController, 'reservations']);
     $router->add('GET', '/reservations/create', [$pageController, 'create']);
-    $router->add('GET', '/reservations/manage', [$pageController, 'manage']);
     $router->add('GET', '/reservations/{id}', [$pageController, 'show']);
 
     $router->add('GET', '/api/reservations', [$controller, 'index']);
