@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('reservation-filters');
     const tableBody = document.getElementById('reservations-body');
     const message = document.getElementById('filter-message');
+    const createForm = document.getElementById('create-reservation-form');
+    const createMessage = document.getElementById('create-message');
 
     if (!form || !tableBody || !message) {
         return;
@@ -103,4 +105,48 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('reset', () => {
         setTimeout(loadReservations, 0);
     });
+
+    
+    if (createForm && createMessage) {
+        createForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const data = Object.fromEntries(new FormData(createForm));
+
+            if (data.check_out <= data.check_in) {
+                createMessage.textContent = 'Check-out must be after check-in.';
+                return;
+            }
+
+            createMessage.textContent = 'Creating reservation...';
+
+            const submitButton = createForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+
+            try {
+                const response = await fetch('/api/reservations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Could not create reservation.');
+                }
+
+                createMessage.textContent = 'Reservation created successfully.';
+                createForm.reset();
+
+                await loadReservations();
+            } catch (error) {
+                createMessage.textContent = error.message;
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
+    }
+
 });
