@@ -21,4 +21,27 @@ class PageController
             'reservations' => $reservations
         ]);
     }
+
+    
+    public function show(string $id): void
+    {
+        if (!ctype_digit($id) || $id === '0' || (string) (int) $id !== $id) {
+            http_response_code(400);
+            echo 'Invalid reservation ID';
+            return;
+        }
+
+        $reservation = $this->service->findById((int) $id);
+
+        if ($reservation === null) {
+            http_response_code(404);
+            echo 'Reservation not found';
+            return;
+        }
+
+        echo $this->twig->render('reservations/show.twig', [
+            'reservation' => $reservation
+        ]);
+    }
+
 }

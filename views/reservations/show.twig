@@ -1,0 +1,34 @@
+
+{% extends 'base.twig' %}
+
+{% block title %}Reservation Details - MisterPlan{% endblock %}
+
+{% block content %}
+    <h1>Reservation Details</h1>
+
+    <p>
+        <a href="/reservations">Back to reservations</a>
+    </p>
+
+    <section>
+        <h2>Guest Information</h2>
+
+        <p><strong>Name:</strong> {{ reservation.nombre_huesped }}</p>
+        <p><strong>Email:</strong> {{ reservation.email_huesped }}</p>
+    </section>
+
+    <section>
+        <h2>Booking Information</h2>
+
+        <p><strong>Accommodation:</strong> {{ reservation.nombre_alojamiento }}</p>
+        <p><strong>Check-in:</strong> {{ reservation.fecha_entrada|date('d/m/Y') }}</p>
+        <p><strong>Check-out:</strong> {{ reservation.fecha_salida|date('d/m/Y') }}</p>
+        <p><strong>Status:</strong> {{ reservation.estado }}</p>
+        <p><strong>Amount:</strong> {{ reservation.importe|number_format(2, ',', '.') }} €</p>
+        <p><strong>Created:</strong> {{ reservation.fecha_creacion|date('d/m/Y H:i') }}</p>
+
+        {% if reservation.notas %}
+            <p><strong>Notes:</strong> {{ reservation.notas }}</p>
+        {% endif %}
+    </section>
+{% endblock %}
