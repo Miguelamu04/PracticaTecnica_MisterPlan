@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}MisterPlan - Reservations{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <nav aria-label="Navegación principal">
+            <a href="/">MisterPlan</a>
+            <a href="/reservations">Reservas</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>MisterPlan - Reservation Management</p>
+    </footer>
+</body>
+</html>
