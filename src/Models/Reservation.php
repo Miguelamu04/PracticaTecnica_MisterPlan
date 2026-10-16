@@ -23,16 +23,6 @@ class Reservation
     }
 
     
-    public function findAll(): array
-    {
-        $sql = "SELECT * FROM reserva ORDER BY fecha_creacion DESC, id DESC";
-
-        $statement = $this->pdo->query($sql);
-
-        return $statement->fetchAll();
-    }
-
-    
     public function findByFilters(array $filters): array
     {
         $sql = "SELECT * FROM reserva WHERE 1 = 1";
