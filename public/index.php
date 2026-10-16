@@ -7,7 +7,9 @@ use App\Router;
 use App\Services\ReservationService;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
+ini_set('display_errors', '0');
 
+try{
 Dotenv\Dotenv::createImmutable(dirname(__DIR__))->load();
 
 $pdo = Connection::create();
@@ -31,3 +33,13 @@ $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 $router->dispatch($method, $path);
+} catch (Throwable $exception) {
+    error_log($exception);
+
+    http_response_code(500);
+    header('Content-Type: application/json; charset=utf-8');
+
+    echo json_encode([
+        'error' => 'Internal server error'
+    ]);
+}
