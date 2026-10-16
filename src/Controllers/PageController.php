@@ -22,7 +22,19 @@ class PageController
         ]);
     }
 
+    public function create(): void
+    {
+        echo $this->twig->render('reservations/create.twig');
+    }
     
+    public function manage(): void
+    {
+        $reservations = $this->service->findByFilters([]);
+
+        echo $this->twig->render('reservations/manage.twig', [
+            'reservations' => $reservations
+        ]);
+    }
     public function show(string $id): void
     {
         if (!ctype_digit($id) || $id === '0' || (string) (int) $id !== $id) {

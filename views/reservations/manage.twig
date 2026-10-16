@@ -1,0 +1,57 @@
+
+{% extends 'base.twig' %}
+
+{% block title %}Manage Reservations - MisterPlan{% endblock %}
+
+{% block content %}
+    <h1>Manage Reservations</h1>
+
+    <p>Manage reservation statuses and view booking details.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Guest</th>
+                <th scope="col">Accommodation</th>
+                <th scope="col">Status</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Details</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody id="manage-reservations-body">
+            {% for reservation in reservations %}
+                <tr>
+                    <td>{{ reservation.nombre_huesped }}</td>
+                    <td>{{ reservation.nombre_alojamiento }}</td>
+                    <td>{{ reservation.estado }}</td>
+                    <td>{{ reservation.importe|number_format(2, ',', '.') }} €</td>
+                    <td>
+                        <a href="/reservations/{{ reservation.id }}">View details</a>
+                    </td>
+                    <td>
+                        {% if reservation.estado != 'cancelada' %}
+                            <button
+                                type="button"
+                                class="cancel-reservation"
+                                data-id="{{ reservation.id }}"
+                            >
+                                Cancel reservation
+                            </button>
+                        {% else %}
+                            <span>Cancelled</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">No reservations found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p id="manage-message" role="status" aria-live="polite"></p>
+    <script src="/js/manage_reservations.js" defer></script>
+{% endblock %}

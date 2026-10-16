@@ -31,6 +31,8 @@ $pageController = new PageController($twig, $service);
 $router = new Router();
 
 $router->add('GET', '/reservations', [$pageController, 'reservations']);
+$router->add('GET', '/reservations/create', [$pageController, 'create']);
+$router->add('GET', '/reservations/manage', [$pageController, 'manage']);
 $router->add('GET', '/reservations/{id}', [$pageController, 'show']);
 $router->add('GET', '/api/reservations', [$controller, 'index']);
 $router->add('GET', '/api/reservations/{id}', [$controller, 'show']);
