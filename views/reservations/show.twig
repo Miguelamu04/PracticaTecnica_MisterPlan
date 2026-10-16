@@ -30,5 +30,25 @@
         {% if reservation.notas %}
             <p><strong>Notes:</strong> {{ reservation.notas }}</p>
         {% endif %}
+    </section> 
+    <section>
+        <h2>Reservation History</h2>
+
+        {% if events is not empty %}
+            <ol>
+                {% for event in events %}
+                    <li>
+                        <strong>{{ event.tipo|capitalize }}</strong>
+                        <p>{{ event.descripcion }}</p>
+                        <time datetime="{{ event.fecha_creacion|date('Y-m-d\\TH:i:s') }}">
+                            {{ event.fecha_creacion|date('d/m/Y H:i') }}
+                        </time>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            <p>No events found for this reservation.</p>
+        {% endif %}
     </section>
+
 {% endblock %}

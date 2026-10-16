@@ -137,6 +137,14 @@ class ReservationService
         return $this->model->findById($id);
     }
 
+    public function findEventsByReservationId(int $id): array
+    {
+        if ($id <= 0) {
+            throw new InvalidArgumentException("Invalid reservation ID");
+        }
+
+        return $this->model->findEventsByReservationId($id);
+    }
 
     private function parseDate(string $value): ?DateTimeImmutable
     {

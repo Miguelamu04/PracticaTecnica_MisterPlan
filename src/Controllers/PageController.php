@@ -39,8 +39,11 @@ class PageController
             return;
         }
 
+        $events = $this->service->findEventsByReservationId((int) $id);
+
         echo $this->twig->render('reservations/show.twig', [
-            'reservation' => $reservation
+            'reservation' => $reservation,
+            'events' => $events
         ]);
     }
 
