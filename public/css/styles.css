@@ -1,0 +1,192 @@
+
+:root {
+    --primary: #2563eb;
+    --background: #f8fafc;
+    --white: #ffffff;
+    --text: #1f2937;
+    --border: #d1d5db;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: var(--text);
+    background: var(--background);
+    line-height: 1.5;
+}
+
+/* Navigation */
+
+header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+}
+
+nav {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+nav a {
+    color: var(--text);
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: var(--primary);
+}
+
+nav a:first-child {
+    font-weight: bold;
+    color: var(--primary);
+    margin-right: 20px;
+}
+
+/* Main content */
+
+main {
+    max-width: 1100px;
+    margin: 32px auto;
+    padding: 0 20px;
+}
+
+h1 {
+    font-size: 26px;
+    margin-top: 0;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+section {
+    margin-bottom: 24px;
+}
+
+a {
+    color: var(--primary);
+}
+
+/* Forms */
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+form > div {
+    flex: 1 1 220px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font: inherit;
+    background: var(--white);
+}
+
+button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    background: var(--primary);
+    color: var(--white);
+    cursor: pointer;
+    font: inherit;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#create-reservation-form button {
+    background: #15803d;
+}
+
+.cancel-reservation {
+    background: #dc2626;
+}
+
+/* Tables */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+}
+
+th,
+td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    background: #f1f5f9;
+}
+
+/* Footer */
+
+footer {
+    padding: 24px;
+    text-align: center;
+    color: #6b7280;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    nav {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    main {
+        margin: 20px auto;
+        padding: 0 12px;
+    }
+
+    form {
+        flex-direction: column;
+    }
+
+    form > div {
+        flex: 1 1 auto;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    th,
+    td {
+        white-space: nowrap;
+    }
+}
