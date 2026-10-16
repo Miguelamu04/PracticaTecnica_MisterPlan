@@ -1,6 +1,4 @@
 
--- MisterPlan V2
--- Base de datos de reservas
 
 CREATE DATABASE IF NOT EXISTS misterplan_reservas_v2
 CHARACTER SET utf8mb4
@@ -55,7 +53,6 @@ ALTER TABLE reserva
         CHECK (importe >= 0);
 
 
--- Datos de ejemplo para la tabla reserva
 
 INSERT INTO reserva (
     id,
@@ -168,7 +165,6 @@ INSERT INTO reserva (
 
 
 
--- Datos de ejemplo para el historial de reservas
 
 INSERT INTO reserva_evento (
     reserva_id,
@@ -176,31 +172,23 @@ INSERT INTO reserva_evento (
     descripcion,
     fecha_creacion
 ) VALUES
--- Reserva 1: confirmada
 (1, 'creacion', 'Reserva creada en estado pendiente', '2026-10-10 10:15:00'),
 (1, 'confirmacion', 'Cambio de estado: pendiente a confirmada', '2026-10-10 10:20:00'),
 
--- Reserva 2: pendiente
 (2, 'creacion', 'Reserva creada en estado pendiente', '2026-10-11 09:30:00'),
 
--- Reserva 3: cancelada
 (3, 'creacion', 'Reserva creada en estado pendiente', '2026-10-08 12:00:00'),
 (3, 'cancelacion', 'Cambio de estado: pendiente a cancelada', '2026-10-09 14:00:00'),
 
--- Reserva 4: confirmada
 (4, 'creacion', 'Reserva creada en estado pendiente', '2026-10-12 16:45:00'),
 (4, 'confirmacion', 'Cambio de estado: pendiente a confirmada', '2026-10-12 16:47:00'),
 
--- Reserva 5: pendiente
 (5, 'creacion', 'Reserva creada en estado pendiente', '2026-10-13 11:20:00'),
 
--- Reserva 6: cancelada
 (6, 'creacion', 'Reserva creada en estado pendiente', '2026-10-14 08:05:00'),
 (6, 'cancelacion', 'Cambio de estado: pendiente a cancelada', '2026-10-14 12:25:00'),
 
--- Reserva 7: pendiente
 (7, 'creacion', 'Reserva creada en estado pendiente', '2026-10-15 09:15:00'),
 
--- Reserva 8: confirmada
 (8, 'creacion', 'Reserva creada en estado pendiente', '2026-10-15 11:30:00'),
 (8, 'confirmacion', 'Cambio de estado: pendiente a confirmada', '2026-10-15 11:35:00');

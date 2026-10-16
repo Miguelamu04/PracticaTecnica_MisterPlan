@@ -30,7 +30,6 @@ function expectValidationError(
     }
 }
 
-// These tests only cover validation errors before database access.
 $reflection = new ReflectionClass(Reservation::class);
 $model = $reflection->newInstanceWithoutConstructor();
 $service = new ReservationService($model);

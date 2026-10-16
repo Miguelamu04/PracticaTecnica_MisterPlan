@@ -19,7 +19,6 @@ body {
     line-height: 1.5;
 }
 
-/* Navigation */
 
 header {
     background: var(--white);
@@ -50,7 +49,6 @@ nav a:first-child {
     margin-right: 20px;
 }
 
-/* Main content */
 
 main {
     max-width: 1100px;
@@ -75,7 +73,6 @@ a {
     color: var(--primary);
 }
 
-/* Forms */
 
 form {
     display: flex;
@@ -136,7 +133,6 @@ button:disabled {
     background: #15803d;
 }
 
-/* Reservation actions */
 
 td:last-child {
     min-width: 160px;
@@ -155,7 +151,6 @@ td:last-child button:last-child {
     margin-bottom: 0;
 }
 
-/* Notifications */
 
 .notification {
     display: flex;
@@ -237,7 +232,6 @@ td:last-child button:last-child {
     }
 }
 
-/* Tables */
 
 table {
     width: 100%;
@@ -256,7 +250,6 @@ th {
     background: #f1f5f9;
 }
 
-/* Footer */
 
 footer {
     padding: 24px;
@@ -264,7 +257,6 @@ footer {
     color: #6b7280;
 }
 
-/* Responsive */
 
 @media (max-width: 768px) {
     nav {
