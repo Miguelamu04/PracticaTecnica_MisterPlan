@@ -21,6 +21,11 @@ $router = new Router();
 $router->add('GET', '/api/reservations', [$controller, 'index']);
 $router->add('GET', '/api/reservations/{id}', [$controller, 'show']);
 $router->add('POST', '/api/reservations', [$controller, 'store']);
+$router->add(
+    'PATCH',
+    '/api/reservations/{id}/status',
+    [$controller, 'updateStatus']
+);
 
 $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
