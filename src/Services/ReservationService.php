@@ -50,8 +50,10 @@ class ReservationService
             }
         }
 
-        if (isset($data['notes']) && !is_string($data['notes'])) {
-            throw new InvalidArgumentException("Invalid notes");
+        if (isset($data['notes'])) {
+            if (!is_string($data['notes']) || strlen($data['notes']) > 65535) {
+                throw new InvalidArgumentException("Invalid notes");
+            }
         }
 
 
