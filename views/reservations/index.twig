@@ -5,5 +5,40 @@
 
 {% block content %}
     <h1>Reservations</h1>
-    <p>Reservation management page.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Guest</th>
+                <th scope="col">Accommodation</th>
+                <th scope="col">Check-in</th>
+                <th scope="col">Check-out</th>
+                <th scope="col">Status</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Details</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for reservation in reservations %}
+                <tr>
+                    <td>{{ reservation.nombre_huesped }}</td>
+                    <td>{{ reservation.nombre_alojamiento }}</td>
+                    <td>{{ reservation.fecha_entrada|date('d/m/Y') }}</td>
+                    <td>{{ reservation.fecha_salida|date('d/m/Y') }}</td>
+                    <td>{{ reservation.estado }}</td>
+                    <td>{{ reservation.importe|number_format(2, ',', '.') }} €</td>
+                    <td>
+                        <a href="/reservations/{{ reservation.id }}">
+                            View details
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">No reservations found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

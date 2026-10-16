@@ -26,7 +26,7 @@ $twig = new Environment($loader, [
     'autoescape' => 'html'
 ]);
 
-$pageController = new PageController($twig);
+$pageController = new PageController($twig, $service);
 
 $router = new Router();
 
