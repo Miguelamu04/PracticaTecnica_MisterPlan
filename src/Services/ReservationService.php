@@ -78,6 +78,56 @@ class ReservationService
 
         return $this->model->create($data);
     }
+    
+    public function findByFilters(array $filters): array
+    {
+        if (isset($filters['status']) && $filters['status'] !== '') {
+            if (!is_string($filters['status']) ||
+                !in_array($filters['status'], ['pendiente', 'confirmada', 'cancelada'], true)) {
+                throw new InvalidArgumentException("Invalid status");
+            }
+        }
+
+        foreach (['start_date', 'end_date'] as $field) {
+            if (isset($filters[$field]) && $filters[$field] !== '') {
+                if (!is_string($filters[$field]) ||
+                    !$this->parseDate($filters[$field])) {
+                    throw new InvalidArgumentException("Invalid date: $field");
+                }
+            }
+        }
+
+        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+            if ($filters['end_date'] < $filters['start_date']) {
+                throw new InvalidArgumentException("Invalid date range");
+            }
+        }
+
+        if (isset($filters['guest']) && $filters['guest'] !== '') {
+            if (!is_string($filters['guest']) ||
+                mb_strlen($filters['guest'], 'UTF-8') > 150) {
+                throw new InvalidArgumentException("Invalid guest");
+            }
+        }
+
+        return $this->model->findByFilters($filters);
+    }
+
+    
+    public function updateStatus(int $id, string $status): ?bool
+    {
+        if ($id <= 0) {
+            throw new InvalidArgumentException("Invalid reservation ID");
+        }
+
+        if (!in_array($status, ['confirmada', 'cancelada'], true)) {
+            throw new InvalidArgumentException("Invalid status");
+        }
+
+        return $this->model->updateStatus($id, $status);
+    }
+
+
 
     private function parseDate(string $value): ?DateTimeImmutable
     {
