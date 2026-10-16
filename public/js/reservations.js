@@ -85,6 +85,14 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadReservations() {
         const params = new URLSearchParams(new FormData(form));
 
+        const startDate = params.get('start_date');
+        const endDate = params.get('end_date');
+
+        if (startDate && endDate && endDate < startDate) {
+            message.textContent = 'La fecha «Hasta» no puede ser anterior a «Desde».';
+            return;
+        }
+
         for (const [key, value] of params) {
             if (value.trim() === '') {
                 params.delete(key);

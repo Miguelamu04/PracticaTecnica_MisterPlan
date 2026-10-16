@@ -15,6 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const data = Object.fromEntries(new FormData(createForm));
+        const notes = data.notes || '';
+
+        if (new TextEncoder().encode(notes).length > 65535) {
+            createMessage.textContent = 'Las observaciones son demasiado largas.';
+            return;
+        }
 
         if (data.check_out <= data.check_in) {
             createMessage.textContent = 'La fecha de salida debe ser posterior a la fecha de entrada.';
