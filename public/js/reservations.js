@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reservations.length === 0) {
             const row = document.createElement('tr');
             const cell = addCell(row, 'No reservations found.');
-            cell.colSpan = 7;
+            cell.colSpan = 8;
             tableBody.appendChild(row);
             return;
         }
@@ -55,11 +55,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
             link.href = `/reservations/${reservation.id}`;
             link.textContent = 'View details';
-
+            
             detailCell.appendChild(link);
             row.appendChild(detailCell);
 
+            const actionCell = document.createElement('td');
+
+            if (reservation.estado !== 'cancelada') {
+                const cancelButton = document.createElement('button');
+
+                cancelButton.type = 'button';
+                cancelButton.className = 'cancel-reservation';
+                cancelButton.dataset.id = reservation.id;
+                cancelButton.textContent = 'Cancel reservation';
+
+                actionCell.appendChild(cancelButton);
+            } else {
+                actionCell.textContent = 'Cancelled';
+            }
+
+            row.appendChild(actionCell);
             tableBody.appendChild(row);
+
         });
     }
 
@@ -148,5 +165,49 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    
+    tableBody.addEventListener('click', async (event) => {
+        const button = event.target.closest('.cancel-reservation');
+
+        if (!button) {
+            return;
+        }
+
+        const reservationId = button.dataset.id;
+
+        if (!window.confirm('Are you sure you want to cancel this reservation?')) {
+            return;
+        }
+
+        button.disabled = true;
+        message.textContent = 'Cancelling reservation...';
+
+        try {
+            const response = await fetch(
+                `/api/reservations/${reservationId}/status`,
+                {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: 'cancelada'
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Could not cancel reservation.');
+            }
+
+            await loadReservations();
+            message.textContent = 'Reservation cancelled successfully.';
+        } catch (error) {
+            message.textContent = error.message;
+            button.disabled = false;
+        }
+    });
 
 });
