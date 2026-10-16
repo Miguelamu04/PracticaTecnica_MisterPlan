@@ -75,8 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             throw new Error(
                 errorMessage || 'No se ha podido crear la reserva. Revisa los datos introducidos.'
             );
-
-                throw new Error(errorMessage);
+            
             }
 
             createMessage.textContent = 'Reserva creada correctamente.';
