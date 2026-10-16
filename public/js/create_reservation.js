@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const result = await response.json();
 
-            if (!response.ok) {
+                        if (!response.ok) {
                 const fieldNames = {
                     guest_name: 'nombre del huésped',
                     guest_email: 'correo electrónico',
@@ -49,33 +49,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     amount: 'importe'
                 };
 
-            const errorMessages = {
-                'Invalid guest email': 'El correo electrónico no es válido.',
-                'Invalid reservation dates': 'Las fechas de la reserva no son válidas.',
-                'Invalid amount': 'El importe introducido no es válido.',
-                'Invalid notes': 'Las observaciones no son válidas.'
-            };
+                const errorMessages = {
+                    'Invalid guest email': 'El correo electrónico no es válido.',
+                    'Invalid reservation dates': 'Las fechas de la reserva no son válidas.',
+                    'Invalid amount': 'El importe introducido no es válido.',
+                    'Invalid notes': 'Las observaciones no son válidas.'
+                };
 
-            let errorMessage = errorMessages[result.error];
+                let errorMessage = errorMessages[result.error];
 
-            if (!errorMessage && typeof result.error === 'string') {
-                const [errorType, field] = result.error.split(': ');
+                if (!errorMessage && typeof result.error === 'string') {
+                    const [errorType, field] = result.error.split(': ');
 
-                if (fieldNames[field]) {
-                    if (errorType === 'Required field') {
-                        errorMessage = `El campo ${fieldNames[field]} es obligatorio.`;
-                    } else if (errorType === 'Invalid field') {
-                        errorMessage = `El campo ${fieldNames[field]} no es válido.`;
-                    } else if (errorType === 'Invalid date') {
-                        errorMessage = `La ${fieldNames[field]} no es válida.`;
+                    if (fieldNames[field]) {
+                        if (errorType === 'Required field') {
+                            errorMessage = `El campo ${fieldNames[field]} es obligatorio.`;
+                        } else if (errorType === 'Invalid field') {
+                            errorMessage = `El campo ${fieldNames[field]} no es válido.`;
+                        } else if (errorType === 'Invalid date') {
+                            errorMessage = `La ${fieldNames[field]} no es válida.`;
+                        }
                     }
                 }
-            }
 
-            throw new Error(
-                errorMessage || 'No se ha podido crear la reserva. Revisa los datos introducidos.'
-            );
-            
+                throw new Error(
+                    errorMessage || 'No se ha podido crear la reserva. Revisa los datos introducidos.'
+                );
             }
 
             createMessage.textContent = 'Reserva creada correctamente.';

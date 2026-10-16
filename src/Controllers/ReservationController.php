@@ -12,19 +12,19 @@ class ReservationController
     }
 
     public function index(): void
-        {
-            try {
-                $reservations = $this->service->findByFilters($_GET);
+    {
+        try {
+            $reservations = $this->service->findByFilters($_GET);
 
-                $this->jsonResponse(200, [
-                    'data' => $reservations
-                ]);
-            } catch (InvalidArgumentException $exception) {
-                $this->jsonResponse(400, [
-                    'error' => $exception->getMessage()
-                ]);
-            }
+            $this->jsonResponse(200, [
+                'data' => $reservations
+            ]);
+        } catch (InvalidArgumentException $exception) {
+            $this->jsonResponse(400, [
+                'error' => $exception->getMessage()
+            ]);
         }
+    }
 
     
     public function show(string $id): void

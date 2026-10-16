@@ -105,11 +105,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const response = await fetch(url, {
-            headers: {
-                'Accept': 'application/json'
-            },
-            signal: controller.signal
-        });
+                headers: {
+                    'Accept': 'application/json'
+                },
+                signal: controller.signal
+            });
 
             if (!response.ok) {
                 let errorMessage = 'No se han podido cargar las reservas.';
@@ -149,72 +149,72 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(loadReservations, 0);
     });
 
-    tableBody.addEventListener('click', async (event) => {
-    const button = event.target.closest('.cancel-reservation');
+        tableBody.addEventListener('click', async (event) => {
+        const button = event.target.closest('.cancel-reservation');
 
-    if (!button || !tableBody.contains(button)) {
-        return;
-    }
+        if (!button || !tableBody.contains(button)) {
+            return;
+        }
 
-    const reservationId = button.dataset.id;
+        const reservationId = button.dataset.id;
 
-    if (pendingCancellations.has(reservationId)) {
-        return;
-    }
+        if (pendingCancellations.has(reservationId)) {
+            return;
+        }
 
-    if (!window.confirm('¿Seguro que quieres cancelar esta reserva?')) {
-        return;
-    }
+        if (!window.confirm('¿Seguro que quieres cancelar esta reserva?')) {
+            return;
+        }
 
-    pendingCancellations.add(reservationId);
-    button.disabled = true;
-    message.textContent = 'Cancelando reserva...';
+        pendingCancellations.add(reservationId);
+        button.disabled = true;
+        message.textContent = 'Cancelando reserva...';
 
-    try {
-        const response = await fetch(
-            `/api/reservations/${reservationId}/status`,
-            {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ status: 'cancelada' })
+        try {
+            const response = await fetch(
+                `/api/reservations/${reservationId}/status`,
+                {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ status: 'cancelada' })
+                }
+            );
+
+            if (!response.ok) {
+                let errorMessage = 'No se ha podido cancelar la reserva.';
+
+                if (response.status === 404) {
+                    errorMessage = 'La reserva ya no existe.';
+                } else if (response.status === 400) {
+                    errorMessage = 'La solicitud de cancelación no es válida.';
+                } else if (response.status >= 500) {
+                    errorMessage = 'Error del servidor. Inténtalo de nuevo más tarde.';
+                }
+
+                throw new Error(errorMessage);
             }
-        );
 
-        if (!response.ok) {
-            let errorMessage = 'No se ha podido cancelar la reserva.';
+            const row = button.closest('tr');
 
-            if (response.status === 404) {
-                errorMessage = 'La reserva ya no existe.';
-            } else if (response.status === 400) {
-                errorMessage = 'La solicitud de cancelación no es válida.';
-            } else if (response.status >= 500) {
-                errorMessage = 'Error del servidor. Inténtalo de nuevo más tarde.';
+            if (row) {
+                row.cells[4].textContent = 'Cancelada';
             }
 
-            throw new Error(errorMessage);
+            button.replaceWith(document.createTextNode('Cancelada'));
+            message.textContent = 'Reserva cancelada correctamente.';
+
+        } catch (error) {
+            message.textContent = error.message;
+        } finally {
+            pendingCancellations.delete(reservationId);
+
+            if (button.isConnected) {
+                button.disabled = false;
+            }
         }
-
-        const row = button.closest('tr');
-
-        if (row) {
-            row.cells[4].textContent = 'Cancelada';
-        }
-
-        button.replaceWith(document.createTextNode('Cancelada'));
-        message.textContent = 'Reserva cancelada correctamente.';
-
-    } catch (error) {
-        message.textContent = error.message;
-    } finally {
-        pendingCancellations.delete(reservationId);
-
-        if (button.isConnected) {
-            button.disabled = false;
-        }
-    }
-});
+    });
 
 });
