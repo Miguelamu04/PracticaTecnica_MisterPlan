@@ -20,7 +20,7 @@ class Router
         $methodAllowed = false;
 
         foreach ($this->routes as $route) {
-            $pattern = preg_replace('/\{id\}/', '([0-9]+)', $route['path']);
+            $pattern = preg_replace('/\{id\}/', '([^/]+)', $route['path']);
             $pattern = '#^' . $pattern . '$#';
 
             if (!preg_match($pattern, $path, $matches)) {
