@@ -20,6 +20,7 @@ $router = new Router();
 
 $router->add('GET', '/api/reservations', [$controller, 'index']);
 $router->add('GET', '/api/reservations/{id}', [$controller, 'show']);
+$router->add('POST', '/api/reservations', [$controller, 'store']);
 
 $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);

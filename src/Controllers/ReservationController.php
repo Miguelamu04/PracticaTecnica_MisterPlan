@@ -59,4 +59,36 @@ class ReservationController
         ], JSON_UNESCAPED_UNICODE);
     }
 
+    
+    public function store(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!is_array($data) || json_last_error() !== JSON_ERROR_NONE) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid JSON']);
+            return;
+        }
+
+        try {
+            $id = $this->service->create($data);
+
+            http_response_code(201);
+
+            echo json_encode([
+                'message' => 'Reservation created',
+                'id' => $id
+            ]);
+        } catch (InvalidArgumentException $exception) {
+            http_response_code(400);
+
+            echo json_encode([
+                'error' => $exception->getMessage()
+            ]);
+        }
+    }
+
+
 }
