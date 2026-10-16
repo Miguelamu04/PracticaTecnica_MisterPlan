@@ -6,9 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!createForm || !createMessage) {
         return;
     }
+    let isSubmitting = false;
 
     createForm.addEventListener('submit', async (event) => {
         event.preventDefault();
+        if (isSubmitting) {
+            return;
+        }
 
         const data = Object.fromEntries(new FormData(createForm));
 
@@ -19,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const submitButton = createForm.querySelector('button[type="submit"]');
 
+        isSubmitting = true;
         submitButton.disabled = true;
         createMessage.textContent = 'Creando reserva...';
 
@@ -32,8 +37,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(data)
             });
 
+            const result = await response.json();
+
             if (!response.ok) {
-                throw new Error('No se ha podido crear la reserva.');
+                const errorMessages = {
+                    'Invalid guest email': 'El correo electrónico no es válido.',
+                    'Invalid reservation dates': 'Las fechas de la reserva no son válidas.',
+                    'Invalid amount': 'El importe introducido no es válido.',
+                    'Invalid notes': 'Las observaciones no son válidas.'
+                };
+
+                const errorMessage = errorMessages[result.error]
+                    || 'No se ha podido crear la reserva. Revisa los datos introducidos.';
+
+                throw new Error(errorMessage);
             }
 
             createMessage.textContent = 'Reserva creada correctamente.';
@@ -42,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             createMessage.textContent = error.message;
         } finally {
+            isSubmitting = false;
             submitButton.disabled = false;
         }
     });
