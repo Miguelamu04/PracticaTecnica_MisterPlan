@@ -12,79 +12,61 @@ class ReservationController
     }
 
     public function index(): void
-    {
-        header('Content-Type: application/json; charset=utf-8');
+        {
+            try {
+                $reservations = $this->service->findByFilters($_GET);
 
-        try {
-            $reservations = $this->service->findByFilters($_GET);
-
-            http_response_code(200);
-
-            echo json_encode([
-                'data' => $reservations
-            ], JSON_UNESCAPED_UNICODE);
-
-        } catch (InvalidArgumentException $exception) {
-            http_response_code(400);
-
-            echo json_encode([
-                'error' => $exception->getMessage()
-            ]);
+                $this->jsonResponse(200, [
+                    'data' => $reservations
+                ]);
+            } catch (InvalidArgumentException $exception) {
+                $this->jsonResponse(400, [
+                    'error' => $exception->getMessage()
+                ]);
+            }
         }
-    }
 
     
     public function show(string $id): void
     {
-        header('Content-Type: application/json; charset=utf-8');
+        $reservationId = $this->parseReservationId($id);
 
-        if (!ctype_digit($id) || $id === '0' || (string) (int) $id !== $id) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Invalid reservation ID']);
+        if ($reservationId === null) {
+            $this->jsonResponse(400, ['error' => 'Invalid reservation ID']);
             return;
         }
 
-        $reservation = $this->service->findById((int) $id);
+        $reservation = $this->service->findById($reservationId);
 
         if ($reservation === null) {
-            http_response_code(404);
-            echo json_encode(['error' => 'Reservation not found']);
+            $this->jsonResponse(404, ['error' => 'Reservation not found']);
             return;
         }
 
-        http_response_code(200);
-
-        echo json_encode([
+        $this->jsonResponse(200, [
             'data' => $reservation
-        ], JSON_UNESCAPED_UNICODE);
+        ]);
     }
 
     
     public function store(): void
     {
-        header('Content-Type: application/json; charset=utf-8');
+        $data = $this->readJson();
 
-        $data = json_decode(file_get_contents('php://input'), true);
-
-        if (!is_array($data) || json_last_error() !== JSON_ERROR_NONE) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Invalid JSON']);
+        if ($data === null) {
+            $this->jsonResponse(400, ['error' => 'Invalid JSON']);
             return;
         }
 
         try {
             $id = $this->service->create($data);
 
-            http_response_code(201);
-
-            echo json_encode([
+            $this->jsonResponse(201, [
                 'message' => 'Reservation created',
                 'id' => $id
             ]);
         } catch (InvalidArgumentException $exception) {
-            http_response_code(400);
-
-            echo json_encode([
+            $this->jsonResponse(400, [
                 'error' => $exception->getMessage()
             ]);
         }
@@ -93,50 +75,70 @@ class ReservationController
     
     public function updateStatus(string $id): void
     {
-        header('Content-Type: application/json; charset=utf-8');
+        $reservationId = $this->parseReservationId($id);
 
-        if (!ctype_digit($id) || $id === '0' || (string) (int) $id !== $id) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Invalid reservation ID']);
+        if ($reservationId === null) {
+            $this->jsonResponse(400, ['error' => 'Invalid reservation ID']);
             return;
         }
 
-        $data = json_decode(file_get_contents('php://input'), true);
+        $data = $this->readJson();
 
-        if (!is_array($data) || json_last_error() !== JSON_ERROR_NONE) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Invalid JSON']);
+        if ($data === null) {
+            $this->jsonResponse(400, ['error' => 'Invalid JSON']);
             return;
         }
 
         if (!isset($data['status']) || !is_string($data['status'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Invalid status']);
+            $this->jsonResponse(400, ['error' => 'Invalid status']);
             return;
         }
 
         try {
-            $result = $this->service->updateStatus((int) $id, $data['status']);
+            $result = $this->service->updateStatus($reservationId, $data['status']);
 
             if ($result === null) {
-                http_response_code(404);
-                echo json_encode(['error' => 'Reservation not found']);
+                $this->jsonResponse(404, ['error' => 'Reservation not found']);
                 return;
             }
 
-            http_response_code(200);
-
-            echo json_encode([
+            $this->jsonResponse(200, [
                 'message' => $result
                     ? 'Reservation status updated'
                     : 'Reservation status unchanged'
             ]);
-
-        } catch (\InvalidArgumentException $exception) {
-            http_response_code(400);
-            echo json_encode(['error' => $exception->getMessage()]);
+        } catch (InvalidArgumentException $exception) {
+            $this->jsonResponse(400, [
+                'error' => $exception->getMessage()
+            ]);
         }
     }
+    
+    private function readJson(): ?array
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
 
+        if (!is_array($data) || json_last_error() !== JSON_ERROR_NONE) {
+            return null;
+        }
 
+        return $data;
+    }
+
+    private function parseReservationId(string $id): ?int
+    {
+        if (!ctype_digit($id) || $id === '0' || (string) (int) $id !== $id) {
+            return null;
+        }
+
+        return (int) $id;
+    }
+
+    private function jsonResponse(int $statusCode, array $data): void
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json; charset=utf-8');
+
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+    }
 }
