@@ -65,6 +65,68 @@ class Reservation
 
         return $statement->fetchAll();
     }
+    public function create(array $data): int
+    {
+        $sql = "INSERT INTO reserva (
+                    nombre_huesped,
+                    email_huesped,
+                    nombre_alojamiento,
+                    fecha_entrada,
+                    fecha_salida,
+                    importe,
+                    notas
+                ) VALUES (
+                    :guest_name,
+                    :guest_email,
+                    :accommodation,
+                    :check_in,
+                    :check_out,
+                    :amount,
+                    :notes
+                )";
+
+        $this->pdo->beginTransaction();
+
+        try {
+            $statement = $this->pdo->prepare($sql);
+
+            $statement->execute([
+                'guest_name' => $data['guest_name'],
+                'guest_email' => $data['guest_email'],
+                'accommodation' => $data['accommodation'],
+                'check_in' => $data['check_in'],
+                'check_out' => $data['check_out'],
+                'amount' => $data['amount'],
+                'notes' => $data['notes'] ?? null
+            ]);
+
+            $reservationId = (int) $this->pdo->lastInsertId();
+
+            $eventSql = "INSERT INTO reserva_evento (
+                            reserva_id,
+                            tipo,
+                            descripcion
+                        ) VALUES (
+                            :reservation_id,
+                            'creacion',
+                            'Reserva creada en estado pendiente'
+                        )";
+
+            $eventStatement = $this->pdo->prepare($eventSql);
+            $eventStatement->execute([
+                'reservation_id' => $reservationId
+            ]);
+
+            $this->pdo->commit();
+
+            return $reservationId;
+
+        } catch (\Throwable $exception) {
+            $this->pdo->rollBack();
+            throw $exception;
+        }
+    }
+
 
 
 }
