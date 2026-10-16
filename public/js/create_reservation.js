@@ -13,14 +13,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = Object.fromEntries(new FormData(createForm));
 
         if (data.check_out <= data.check_in) {
-            createMessage.textContent = 'Check-out must be after check-in.';
+            createMessage.textContent = 'La fecha de salida debe ser posterior a la fecha de entrada.';
             return;
         }
 
         const submitButton = createForm.querySelector('button[type="submit"]');
 
         submitButton.disabled = true;
-        createMessage.textContent = 'Creating reservation...';
+        createMessage.textContent = 'Creando reserva...';
 
         try {
             const response = await fetch('/api/reservations', {
@@ -33,10 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
-                throw new Error('Could not create reservation.');
+                throw new Error('No se ha podido crear la reserva.');
             }
 
-            createMessage.textContent = 'Reservation created successfully.';
+            createMessage.textContent = 'Reserva creada correctamente.';
             createForm.reset();
 
         } catch (error) {

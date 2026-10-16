@@ -16,12 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const reservationId = button.dataset.id;
 
-        if (!window.confirm('Are you sure you want to cancel this reservation?')) {
+        if (!window.confirm('¿Seguro que quieres cancelar esta reserva?')) {
             return;
         }
 
         button.disabled = true;
-        message.textContent = 'Cancelling reservation...';
+        message.textContent = 'Cancelando reserva...';
 
         try {
             const response = await fetch(
@@ -39,17 +39,17 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             if (!response.ok) {
-                throw new Error('Could not cancel reservation.');
+                throw new Error('No se ha podido cancelar la reserva.');
             }
 
             const row = button.closest('tr');
 
             if (row) {
-                row.cells[2].textContent = 'cancelada';
+                row.cells[2].textContent = 'Cancelada';
             }
 
-            button.replaceWith(document.createTextNode('Cancelled'));
-            message.textContent = 'Reservation cancelled successfully.';
+            button.replaceWith(document.createTextNode('Cancelada'));
+            message.textContent = 'Reserva cancelada correctamente.';
         } catch (error) {
             message.textContent = error.message;
             button.disabled = false;

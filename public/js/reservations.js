@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (reservations.length === 0) {
             const row = document.createElement('tr');
-            const cell = addCell(row, 'No reservations found.');
+            const cell = addCell(row, 'No se han encontrado reservas.');
             cell.colSpan = 7;
             tableBody.appendChild(row);
             return;
@@ -45,14 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
             addCell(row, reservation.nombre_alojamiento);
             addCell(row, formatDate(reservation.fecha_entrada));
             addCell(row, formatDate(reservation.fecha_salida));
-            addCell(row, reservation.estado);
+            addCell(row, ({ pendiente: 'Pendiente', confirmada: 'Confirmada', cancelada: 'Cancelada' })[reservation.estado] ?? reservation.estado);
             addCell(row, formatAmount(reservation.importe));
 
             const detailCell = document.createElement('td');
             const link = document.createElement('a');
 
             link.href = `/reservations/${reservation.id}`;
-            link.textContent = 'View details';
+            link.textContent = 'Ver detalles';
             
             detailCell.appendChild(link);
             row.appendChild(detailCell);
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const query = params.toString();
         const url = query ? `/api/reservations?${query}` : '/api/reservations';
 
-        message.textContent = 'Loading reservations...';
+        message.textContent = 'Cargando reservas...';
 
         try {
             const response = await fetch(url, {
@@ -83,13 +83,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
-                throw new Error('Could not load reservations.');
+                throw new Error('No se han podido cargar las reservas.');
             }
 
             const result = await response.json();
 
             renderReservations(result.data);
-            message.textContent = `${result.data.length} reservations found.`;
+            message.textContent = result.data.length === 1
+                ? '1 reserva encontrada.'
+                : `${result.data.length} reservas encontradas.`;
         } catch (error) {
             message.textContent = error.message;
         }

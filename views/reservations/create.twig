@@ -1,50 +1,50 @@
 
 {% extends 'base.twig' %}
 
-{% block title %}Create Reservation - MisterPlan{% endblock %}
+{% block title %}Crear reserva - MisterPlan{% endblock %}
 
 {% block content %}
-    <h1>Create Reservation</h1>
+    <h1>Crear reserva</h1>
 
     <section>
         <form id="create-reservation-form">
             <div>
-                <label for="guest_name">Guest name</label>
+                <label for="guest_name">Nombre del huésped</label>
                 <input type="text" id="guest_name" name="guest_name" maxlength="150" required>
             </div>
 
             <div>
-                <label for="guest_email">Guest email</label>
+                <label for="guest_email">Correo electrónico del huésped</label>
                 <input type="email" id="guest_email" name="guest_email" maxlength="254" required>
             </div>
 
             <div>
-                <label for="accommodation">Accommodation</label>
+                <label for="accommodation">Alojamiento</label>
                 <input type="text" id="accommodation" name="accommodation" maxlength="200" required>
             </div>
 
             <div>
-                <label for="check_in">Check-in</label>
+                <label for="check_in">Fecha de entrada</label>
                 <input type="date" id="check_in" name="check_in" required>
             </div>
 
             <div>
-                <label for="check_out">Check-out</label>
+                <label for="check_out">Fecha de salida</label>
                 <input type="date" id="check_out" name="check_out" required>
             </div>
 
             <div>
-                <label for="amount">Amount (€)</label>
+                <label for="amount">Importe (€)</label>
                 <input type="number" id="amount" name="amount"
                        min="0" max="99999999.99" step="0.01" required>
             </div>
 
             <div>
-                <label for="notes">Notes (optional)</label>
+                <label for="notes">Notas (opcional)</label>
                 <textarea id="notes" name="notes" rows="3"></textarea>
             </div>
 
-            <button type="submit">Create reservation</button>
+            <button type="submit">Crear reserva</button>
         </form>
 
         <p id="create-message" role="status" aria-live="polite"></p>

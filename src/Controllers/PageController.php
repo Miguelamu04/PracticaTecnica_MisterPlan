@@ -39,7 +39,7 @@ class PageController
     {
         if (!ctype_digit($id) || $id === '0' || (string) (int) $id !== $id) {
             http_response_code(400);
-            echo 'Invalid reservation ID';
+            echo 'El ID de la reserva no es válido';
             return;
         }
 
@@ -47,7 +47,7 @@ class PageController
 
         if ($reservation === null) {
             http_response_code(404);
-            echo 'Reservation not found';
+            echo 'No se ha encontrado la reserva';
             return;
         }
 

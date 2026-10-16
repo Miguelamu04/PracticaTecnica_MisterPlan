@@ -1,44 +1,44 @@
 
 {% extends 'base.twig' %}
 
-{% block title %}Reservations - MisterPlan{% endblock %}
+{% block title %}Reservas - MisterPlan{% endblock %}
 
 {% block content %}
-    <h1>Reservations</h1>
+    <h1>Reservas</h1>
 
     <form id="reservation-filters">
         <div>
-            <label for="guest">Guest name</label>
+            <label for="guest">Nombre del huésped</label>
             <input
                 type="search"
                 id="guest"
                 name="guest"
-                placeholder="Search by guest"
+                placeholder="Buscar por huésped"
             >
         </div>
 
         <div>
-            <label for="status">Status</label>
+            <label for="status">Estado</label>
             <select id="status" name="status">
-                <option value="">All statuses</option>
-                <option value="pendiente">Pending</option>
-                <option value="confirmada">Confirmed</option>
-                <option value="cancelada">Cancelled</option>
+                <option value="">Todos los estados</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="confirmada">Confirmada</option>
+                <option value="cancelada">Cancelada</option>
             </select>
         </div>
 
         <div>
-            <label for="start_date">From</label>
+            <label for="start_date">Desde</label>
             <input type="date" id="start_date" name="start_date">
         </div>
 
         <div>
-            <label for="end_date">To</label>
+            <label for="end_date">Hasta</label>
             <input type="date" id="end_date" name="end_date">
         </div>
 
-        <button type="submit">Apply filters</button>
-        <button type="reset">Clear filters</button>
+        <button type="submit">Aplicar filtros</button>
+        <button type="reset">Borrar filtros</button>
     </form>
 
     <p id="filter-message" role="status" aria-live="polite"></p>
@@ -46,13 +46,13 @@
     <table>
         <thead>
             <tr>
-                <th scope="col">Guest</th>
-                <th scope="col">Accommodation</th>
-                <th scope="col">Check-in</th>
-                <th scope="col">Check-out</th>
-                <th scope="col">Status</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Details</th>
+                <th scope="col">Huésped</th>
+                <th scope="col">Alojamiento</th>
+                <th scope="col">Fecha de entrada</th>
+                <th scope="col">Fecha de salida</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Importe</th>
+                <th scope="col">Detalles</th>
             </tr>
         </thead>
 
@@ -63,17 +63,17 @@
                     <td>{{ reservation.nombre_alojamiento }}</td>
                     <td>{{ reservation.fecha_entrada|date('d/m/Y') }}</td>
                     <td>{{ reservation.fecha_salida|date('d/m/Y') }}</td>
-                    <td>{{ reservation.estado }}</td>
+                    <td>{{ {'pendiente': 'Pendiente', 'confirmada': 'Confirmada', 'cancelada': 'Cancelada'}[reservation.estado] ?? reservation.estado }}</td>
                     <td>{{ reservation.importe|number_format(2, ',', '.') }} €</td>
                     <td>
                         <a href="/reservations/{{ reservation.id }}">
-                            View details
+                            Ver detalles
                         </a>
                     </td>                   
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="7">No reservations found.</td>
+                    <td colspan="7">No se han encontrado reservas.</td>
                 </tr>
             {% endfor %}
         </tbody>

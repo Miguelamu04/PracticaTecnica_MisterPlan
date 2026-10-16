@@ -1,22 +1,20 @@
 
 {% extends 'base.twig' %}
 
-{% block title %}Manage Reservations - MisterPlan{% endblock %}
+{% block title %}Administrar reservas - MisterPlan{% endblock %}
 
 {% block content %}
-    <h1>Manage Reservations</h1>
-
-    <p>Manage reservation statuses and view booking details.</p>
+    <h1>Administrar reservas</h1>
 
     <table>
         <thead>
             <tr>
-                <th scope="col">Guest</th>
-                <th scope="col">Accommodation</th>
-                <th scope="col">Status</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Details</th>
-                <th scope="col">Actions</th>
+                <th scope="col">Huésped</th>
+                <th scope="col">Alojamiento</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Importe</th>
+                <th scope="col">Detalles</th>
+                <th scope="col">Acciones</th>
             </tr>
         </thead>
 
@@ -25,10 +23,10 @@
                 <tr>
                     <td>{{ reservation.nombre_huesped }}</td>
                     <td>{{ reservation.nombre_alojamiento }}</td>
-                    <td>{{ reservation.estado }}</td>
+                    <td>{{ {'pendiente': 'Pendiente', 'confirmada': 'Confirmada', 'cancelada': 'Cancelada'}[reservation.estado] ?? reservation.estado }}</td>
                     <td>{{ reservation.importe|number_format(2, ',', '.') }} €</td>
                     <td>
-                        <a href="/reservations/{{ reservation.id }}">View details</a>
+                        <a href="/reservations/{{ reservation.id }}">Ver detalles</a>
                     </td>
                     <td>
                         {% if reservation.estado != 'cancelada' %}
@@ -37,16 +35,16 @@
                                 class="cancel-reservation"
                                 data-id="{{ reservation.id }}"
                             >
-                                Cancel reservation
+                                Cancelar reserva
                             </button>
                         {% else %}
-                            <span>Cancelled</span>
+                            <span>Cancelada</span>
                         {% endif %}
                     </td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="6">No reservations found.</td>
+                    <td colspan="6">No se han encontrado reservas.</td>
                 </tr>
             {% endfor %}
         </tbody>
