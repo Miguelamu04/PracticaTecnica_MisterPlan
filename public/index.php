@@ -19,6 +19,7 @@ $controller = new ReservationController($service);
 $router = new Router();
 
 $router->add('GET', '/api/reservations', [$controller, 'index']);
+$router->add('GET', '/api/reservations/{id}', [$controller, 'show']);
 
 $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);

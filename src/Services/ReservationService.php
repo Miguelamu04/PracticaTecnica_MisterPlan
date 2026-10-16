@@ -127,6 +127,15 @@ class ReservationService
         return $this->model->updateStatus($id, $status);
     }
 
+    
+    public function findById(int $id): ?array
+    {
+        if ($id <= 0) {
+            throw new InvalidArgumentException("Invalid reservation ID");
+        }
+
+        return $this->model->findById($id);
+    }
 
 
     private function parseDate(string $value): ?DateTimeImmutable
