@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const tableBody = document.getElementById('manage-reservations-body');
     const message = document.getElementById('manage-message');
@@ -6,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!tableBody || !message) {
         return;
     }
+
+    const pendingCancellations = new Set();
 
     tableBody.addEventListener('click', async (event) => {
         const button = event.target.closest('.cancel-reservation');
@@ -16,9 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const reservationId = button.dataset.id;
 
+        if (pendingCancellations.has(reservationId)) {
+            return;
+        }
+
         if (!window.confirm('¿Seguro que quieres cancelar esta reserva?')) {
             return;
         }
+
+        pendingCancellations.add(reservationId);
 
         button.disabled = true;
         message.textContent = 'Cancelando reserva...';
@@ -39,7 +46,17 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             if (!response.ok) {
-                throw new Error('No se ha podido cancelar la reserva.');
+                let errorMessage = 'No se ha podido cancelar la reserva.';
+
+                if (response.status === 404) {
+                    errorMessage = 'La reserva ya no existe.';
+                } else if (response.status === 400) {
+                    errorMessage = 'La solicitud de cancelación no es válida.';
+                } else if (response.status >= 500) {
+                    errorMessage = 'Error del servidor. Inténtalo de nuevo más tarde.';
+                }
+
+                throw new Error(errorMessage);
             }
 
             const row = button.closest('tr');
@@ -52,7 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
             message.textContent = 'Reserva cancelada correctamente.';
         } catch (error) {
             message.textContent = error.message;
-            button.disabled = false;
+        } finally {
+            pendingCancellations.delete(reservationId);
+
+            if (button.isConnected) {
+                button.disabled = false;
+            }
         }
     });
 });
