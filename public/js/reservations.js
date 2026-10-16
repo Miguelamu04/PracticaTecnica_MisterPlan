@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    function showNotification(text, type) {
+        message.textContent = text;
+        message.className = `notification notification--${type}`;
+        message.hidden = false;
+    }
+
     const pendingCancellations = new Set();
 
     let currentController = null;
@@ -63,6 +69,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const actionCell = document.createElement('td');
 
+            if (reservation.estado === 'pendiente') {
+                const confirmButton = document.createElement('button');
+
+                confirmButton.type = 'button';
+                confirmButton.className = 'confirm-reservation';
+                confirmButton.dataset.id = reservation.id;
+                confirmButton.textContent = 'Confirmar reserva';
+
+                actionCell.appendChild(confirmButton);
+            }
+
             if (reservation.estado !== 'cancelada') {
                 const cancelButton = document.createElement('button');
 
@@ -89,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const endDate = params.get('end_date');
 
         if (startDate && endDate && endDate < startDate) {
-            message.textContent = 'La fecha «Hasta» no puede ser anterior a «Desde».';
+            showNotification('La fecha «Hasta» no puede ser anterior a «Desde».', 'error');
             return;
         }
 
@@ -134,9 +151,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             renderReservations(result.data);
-            message.textContent = result.data.length === 1
-                ? '1 reserva encontrada.'
-                : `${result.data.length} reservas encontradas.`;
+
+            showNotification(
+                result.data.length === 1
+                    ? '1 reserva encontrada.'
+                    : `${result.data.length} reservas encontradas.`,
+                'info'
+            );
         } catch (error) {
             if (error.name !== 'AbortError') {
                 message.textContent = error.message;
@@ -155,6 +176,74 @@ document.addEventListener('DOMContentLoaded', () => {
 
     form.addEventListener('reset', () => {
         setTimeout(loadReservations, 0);
+    });
+
+            tableBody.addEventListener('click', async (event) => {
+        const button = event.target.closest('.confirm-reservation');
+
+        if (!button || !tableBody.contains(button)) {
+            return;
+        }
+
+        const reservationId = button.dataset.id;
+
+        if (pendingCancellations.has(reservationId)) {
+            return;
+        }
+
+        if (!window.confirm('¿Seguro que quieres confirmar esta reserva?')) {
+            return;
+        }
+
+        pendingCancellations.add(reservationId);
+        button.disabled = true;
+        showNotification('Confirmando reserva...', 'loading');
+
+        try {
+            const response = await fetch(
+                `/api/reservations/${reservationId}/status`,
+                {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ status: 'confirmada' })
+                }
+            );
+
+            if (!response.ok) {
+                let errorMessage = 'No se ha podido confirmar la reserva.';
+
+                if (response.status === 404) {
+                    errorMessage = 'La reserva ya no existe.';
+                } else if (response.status === 400) {
+                    errorMessage = 'La solicitud de confirmación no es válida.';
+                } else if (response.status >= 500) {
+                    errorMessage = 'Error del servidor. Inténtalo de nuevo más tarde.';
+                }
+
+                throw new Error(errorMessage);
+            }
+
+            const row = button.closest('tr');
+
+            if (row) {
+                row.cells[4].textContent = 'Confirmada';
+            }
+
+            button.remove();
+            showNotification('Reserva confirmada correctamente.', 'success');
+
+        } catch (error) {
+            showNotification(error.message, 'error');
+        } finally {
+            pendingCancellations.delete(reservationId);
+
+            if (button.isConnected) {
+                button.disabled = false;
+            }
+        }
     });
 
         tableBody.addEventListener('click', async (event) => {
@@ -176,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         pendingCancellations.add(reservationId);
         button.disabled = true;
-        message.textContent = 'Cancelando reserva...';
+        showNotification('Cancelando reserva...', 'loading');
 
         try {
             const response = await fetch(
@@ -212,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             button.replaceWith(document.createTextNode('Cancelada'));
-            message.textContent = 'Reserva cancelada correctamente.';
+            showNotification('Reserva cancelada correctamente.', 'success');
 
         } catch (error) {
             message.textContent = error.message;

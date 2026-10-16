@@ -6,6 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!createForm || !createMessage) {
         return;
     }
+
+    function showNotification(text, type) {
+        createMessage.textContent = text;
+        createMessage.className = `notification notification--${type}`;
+        createMessage.hidden = false;
+    }
+
     let isSubmitting = false;
 
     createForm.addEventListener('submit', async (event) => {
@@ -18,12 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const notes = data.notes || '';
 
         if (new TextEncoder().encode(notes).length > 65535) {
-            createMessage.textContent = 'Las observaciones son demasiado largas.';
+            showNotification('Las observaciones son demasiado largas.', 'error');
             return;
         }
 
         if (data.check_out <= data.check_in) {
-            createMessage.textContent = 'La fecha de salida debe ser posterior a la fecha de entrada.';
+            showNotification('La fecha de salida debe ser posterior a la fecha de entrada.', 'error');
             return;
         }
 
@@ -31,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         isSubmitting = true;
         submitButton.disabled = true;
-        createMessage.textContent = 'Creando reserva...';
+        showNotification('Creando reserva...', 'loading');
 
         try {
             const response = await fetch('/api/reservations', {
@@ -83,11 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 );
             }
 
-            createMessage.textContent = 'Reserva creada correctamente.';
+            showNotification('Reserva creada correctamente.', 'success');
             createForm.reset();
 
         } catch (error) {
-            createMessage.textContent = error.message;
+            showNotification(error.message, 'error');
         } finally {
             isSubmitting = false;
             submitButton.disabled = false;

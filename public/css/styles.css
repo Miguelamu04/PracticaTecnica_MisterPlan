@@ -132,6 +132,111 @@ button:disabled {
     background: #dc2626;
 }
 
+.confirm-reservation {
+    background: #15803d;
+}
+
+/* Reservation actions */
+
+td:last-child {
+    min-width: 160px;
+}
+
+td:last-child button {
+    display: block;
+    width: 100%;
+    margin: 0 0 8px;
+    padding: 9px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+td:last-child button:last-child {
+    margin-bottom: 0;
+}
+
+/* Notifications */
+
+.notification {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    margin: 16px 0 24px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.notification[hidden] {
+    display: none;
+}
+
+.notification::before {
+    flex-shrink: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.notification--success {
+    background: #ecfdf5;
+    border-color: #86efac;
+    color: #166534;
+}
+
+.notification--success::before {
+    content: "✓";
+}
+
+.notification--error {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #991b1b;
+}
+
+.notification--error::before {
+    content: "!";
+}
+
+.notification--info {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: #1e40af;
+}
+
+.notification--info::before {
+    content: "i";
+}
+
+.notification--loading {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #334155;
+}
+
+.notification--loading::before {
+    content: "";
+    width: 16px;
+    height: 16px;
+    border: 2px solid #cbd5e1;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: notification-spin 0.7s linear infinite;
+}
+
+@keyframes notification-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .notification--loading::before {
+        animation: none;
+    }
+}
+
 /* Tables */
 
 table {

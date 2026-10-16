@@ -41,7 +41,7 @@
         <button type="reset">Borrar filtros</button>
     </form>
 
-    <p id="filter-message" role="status" aria-live="polite"></p>
+    <p id="filter-message" class="notification" role="status" aria-live="polite" hidden></p>
 
     <table>
         <thead>
@@ -72,6 +72,16 @@
                         </a>
                     </td>
                     <td>
+                        {% if reservation.estado == 'pendiente' %}
+                            <button
+                                type="button"
+                                class="confirm-reservation"
+                                data-id="{{ reservation.id }}"
+                            >
+                                Confirmar reserva
+                            </button>
+                        {% endif %}
+
                         {% if reservation.estado != 'cancelada' %}
                             <button
                                 type="button"
@@ -83,7 +93,7 @@
                         {% else %}
                             <span>Cancelada</span>
                         {% endif %}
-                    </td>                   
+                    </td>
                 </tr>
             {% else %}
                 <tr>
