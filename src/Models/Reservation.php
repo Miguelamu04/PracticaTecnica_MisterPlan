@@ -21,4 +21,15 @@ class Reservation
 
         return $reservation ?: null;
     }
+
+    
+    public function findAll(): array
+    {
+        $sql = "SELECT * FROM reserva ORDER BY fecha_creacion DESC, id DESC";
+
+        $statement = $this->pdo->query($sql);
+
+        return $statement->fetchAll();
+    }
+
 }
