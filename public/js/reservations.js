@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    let currentController = null;
+
     function formatDate(value) {
         const [year, month, day] = value.split('-');
         return `${day}/${month}/${year}`;
@@ -75,15 +77,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         message.textContent = 'Cargando reservas...';
 
+        if (currentController) {
+            currentController.abort();
+        }
+
+        const controller = new AbortController();
+        currentController = controller;
+
         try {
             const response = await fetch(url, {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
+            headers: {
+                'Accept': 'application/json'
+            },
+            signal: controller.signal
+        });
 
             if (!response.ok) {
-                throw new Error('No se han podido cargar las reservas.');
+                let errorMessage = 'No se han podido cargar las reservas.';
+
+                if (response.status === 400) {
+                    errorMessage = 'Los filtros introducidos no son válidos.';
+                } else if (response.status >= 500) {
+                    errorMessage = 'Error del servidor. Inténtalo de nuevo más tarde.';
+                }
+
+                throw new Error(errorMessage);
             }
 
             const result = await response.json();
@@ -93,7 +111,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? '1 reserva encontrada.'
                 : `${result.data.length} reservas encontradas.`;
         } catch (error) {
-            message.textContent = error.message;
+            if (error.name !== 'AbortError') {
+                message.textContent = error.message;
+            }
+        } finally {
+            if (currentController === controller) {
+                currentController = null;
+            }
         }
     }
 
