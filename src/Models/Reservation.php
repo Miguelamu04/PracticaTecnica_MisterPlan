@@ -32,4 +32,39 @@ class Reservation
         return $statement->fetchAll();
     }
 
+    
+    public function findByFilters(array $filters): array
+    {
+        $sql = "SELECT * FROM reserva WHERE 1 = 1";
+        $params = [];
+
+        if (!empty($filters['status'])) {
+            $sql .= " AND estado = :status";
+            $params['status'] = $filters['status'];
+        }
+
+        if (!empty($filters['start_date'])) {
+            $sql .= " AND fecha_entrada >= :start_date";
+            $params['start_date'] = $filters['start_date'];
+        }
+
+        if (!empty($filters['end_date'])) {
+            $sql .= " AND fecha_salida <= :end_date";
+            $params['end_date'] = $filters['end_date'];
+        }
+
+        if (!empty($filters['guest'])) {
+            $sql .= " AND nombre_huesped LIKE :guest";
+            $params['guest'] = '%' . $filters['guest'] . '%';
+        }
+
+        $sql .= " ORDER BY fecha_creacion DESC, id DESC";
+
+        $statement = $this->pdo->prepare($sql);
+        $statement->execute($params);
+
+        return $statement->fetchAll();
+    }
+
+
 }
