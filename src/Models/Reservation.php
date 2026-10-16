@@ -143,5 +143,63 @@ class Reservation
         return $statement->fetchAll();
     }
 
+    
+    public function updateStatus(int $id, string $status): ?bool
+    {
+        $this->pdo->beginTransaction();
+
+        try {
+            $statement = $this->pdo->prepare(
+                "SELECT estado FROM reserva WHERE id = :id FOR UPDATE"
+            );
+            $statement->execute(['id' => $id]);
+
+            $reservation = $statement->fetch();
+
+            if (!$reservation) {
+                $this->pdo->rollBack();
+                return null;
+            }
+
+            if ($reservation['estado'] === $status) {
+                $this->pdo->commit();
+                return false;
+            }
+
+            $statement = $this->pdo->prepare(
+                "UPDATE reserva SET estado = :status WHERE id = :id"
+            );
+            $statement->execute([
+                'status' => $status,
+                'id' => $id
+            ]);
+
+            $eventType = $status === 'confirmada'
+                ? 'confirmacion'
+                : 'cancelacion';
+
+            $description = "Cambio de estado: "
+                . $reservation['estado'] . " a " . $status;
+
+            $statement = $this->pdo->prepare(
+                "INSERT INTO reserva_evento (reserva_id, tipo, descripcion)
+                VALUES (:id, :type, :description)"
+            );
+
+            $statement->execute([
+                'id' => $id,
+                'type' => $eventType,
+                'description' => $description
+            ]);
+
+            $this->pdo->commit();
+
+            return true;
+
+        } catch (\Throwable $exception) {
+            $this->pdo->rollBack();
+            throw $exception;
+        }
+    }
 
 }
