@@ -5,6 +5,43 @@
 
 {% block content %}
     <h1>Reservations</h1>
+    
+    <form id="reservation-filters">
+        <div>
+            <label for="guest">Guest name</label>
+            <input
+                type="search"
+                id="guest"
+                name="guest"
+                placeholder="Search by guest"
+            >
+        </div>
+
+        <div>
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="">All statuses</option>
+                <option value="pendiente">Pending</option>
+                <option value="confirmada">Confirmed</option>
+                <option value="cancelada">Cancelled</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="start_date">From</label>
+            <input type="date" id="start_date" name="start_date">
+        </div>
+
+        <div>
+            <label for="end_date">To</label>
+            <input type="date" id="end_date" name="end_date">
+        </div>
+
+        <button type="submit">Apply filters</button>
+        <button type="reset">Clear filters</button>
+    </form>
+
+    <p id="filter-message" role="status" aria-live="polite"></p>
 
     <table>
         <thead>
@@ -19,7 +56,7 @@
             </tr>
         </thead>
 
-        <tbody>
+        <tbody id="reservations-body">
             {% for reservation in reservations %}
                 <tr>
                     <td>{{ reservation.nombre_huesped }}</td>
@@ -41,4 +78,5 @@
             {% endfor %}
         </tbody>
     </table>
+    <script src="/js/reservations.js" defer></script>
 {% endblock %}
