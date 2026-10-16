@@ -127,6 +127,21 @@ class Reservation
         }
     }
 
+    
+    public function findEventsByReservationId(int $reservationId): array
+    {
+        $sql = "SELECT *
+                FROM reserva_evento
+                WHERE reserva_id = :reservation_id
+                ORDER BY fecha_creacion ASC, id ASC";
+
+        $statement = $this->pdo->prepare($sql);
+        $statement->execute([
+            'reservation_id' => $reservationId
+        ]);
+
+        return $statement->fetchAll();
+    }
 
 
 }
