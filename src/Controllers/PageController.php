@@ -35,6 +35,7 @@ class PageController
             'reservations' => $reservations
         ]);
     }
+    
     public function show(string $id): void
     {
         if (!ctype_digit($id) || $id === '0' || (string) (int) $id !== $id) {
